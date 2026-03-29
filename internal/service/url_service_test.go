@@ -61,7 +61,7 @@ func TestCreateShortURL_ShouldRetry_WhenShortURLAlreadyExists(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Empty(t, shortURL)
-	assert.Contains(t, err.Error(), "failed to generate short url after 5 attempts")
+	assert.Contains(t, err.Error(), "failed to generate short url after 3 attempts")
 }
 
 func TestCreateShortURL_ShouldReturnExisting_WhenOriginalURLExists(t *testing.T) {
