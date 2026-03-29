@@ -1,2 +1,108 @@
-# url-shortener
-REST API url shortener service
+# Укорачиватель ссылок
+Сервис, который предоставляется API по созданию сокращенных ссылок следующего формата:
+—	Для каждого URL уникальная укороченная ссылка.
+—	Длинна укороченной ссылки равна 10.
+—	Укороченная ссылка состоит из из символов латинского алфавита в нижнем и верхнем регистре, цифр и символа _ (подчеркивание).
+
+Данный сервис может работать с двумя хранилищами: in-memory и PostgreSQL. 
+Сервис принимает два запроса:
+1. Метод Post, который будет сохранять оригинальный URL в базе и возвращать сокращённый
+2. Метод Get, который будет принимать сокращённый URL и возвращать оригинальный URL
+
+### Стэк:
+* Go 1.25.1
+* echo
+* PostgreSQL
+* docker
+* postman
+* openAPI
+
+
+## Запуск
+Скопируйте репозиторий: <br>
+``` bash
+	git clone https://github.com/Dmitrii30002/url-shortener.git
+```
+Для запуска сервиса с базой данных используйте команду:
+``` bash
+	make run-service
+```
+Чтобы поднять сервис отдельно используйте следующую команды:
+``` bash
+	make run-service-only
+```
+
+## Запуск
+Для корректной работы сервиса необходимо выставить конфигурации. Для конфигурации используются env и config.yaml файлы. Файл env отвечает за подключение к БД. Остальная конфигурация находится в файле config.yaml. Данные файлы должны хранитьтся в каталоге config. В config.yaml находится настройка хранилища. За выбор типа хранилища отвечает поле storage_type. 
+Допустимые значения **storage_type**: memory или postgres. 
+.env файл должен выглядеть следующим образом:
+```
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
+POSTGRES_SSLMODE=disable
+```
+config.yaml файл должен выглядеть следующим образом:
+```
+storage_type: "postgres"
+base_url: "https://localhost:8080"
+
+server:
+  port: "8080"
+  host: "0.0.0.0"
+
+logger:
+  level: "debug"
+  path: ""
+
+```
+Также помимо хранилища указывается базовый url для укороченной ссылки, а также конфигурация логгера и сервера.
+
+## Тестирование
+Были прописаны unit тесты для всех слоев сервиса, а также для пакета generator. Также для тестирования использовался postman.
+Для запуска тестов пропишите:
+``` bash
+	make test
+```
+
+## Структура проекта
+```
+project/
+├── cmd/
+│   └── server/
+│       └── main.go
+├── config/
+│   ├── config.yaml
+│   └── .env
+├── deploy/
+│   ├── docker-compose.yaml
+│   └── Dockerfile
+├── docs/
+│   └── api.yaml
+├── internal/
+│   ├── config
+│   ├── domain
+│   ├── dto
+│   ├── errors
+│   ├── handler
+│   ├── repository
+│   └── service
+│──pkg/
+│   ├── generator
+│   ├── logger
+│   ├── migrator
+│   └── storage/
+│    	├── postgres
+│    	└── memory
+├── migrations/
+│   └── *.sql
+├── Makefile
+├── go.mod
+└── go.sum
+```
+
+
+  
+
