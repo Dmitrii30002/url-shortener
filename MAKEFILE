@@ -6,3 +6,8 @@ run-service:
 
 stop-service:
 	docker-compose -f deploy/docker-compose.yaml down
+
+
+run-service-only:
+	docker build -t url-shortener -f deploy/Dockerfile .
+	docker run --env-file config/.env url-shortener
