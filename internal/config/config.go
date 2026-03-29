@@ -47,12 +47,12 @@ func GetConfig(path string) (*Config, error) {
 func GetTestConfig() (*Config, error) {
 	config := &Config{}
 
-	config.PostgresCfg.Host = os.Getenv("TEST_DB_HOST")
-	config.PostgresCfg.Port = os.Getenv("TEST_DB_PORT")
-	config.PostgresCfg.Name = os.Getenv("TEST_DB_NAME")
-	config.PostgresCfg.User = os.Getenv("TEST_DB_USER")
-	config.PostgresCfg.Password = os.Getenv("TEST_DB_PASSWORD")
-	config.PostgresCfg.SSLMode = os.Getenv("TEST_DB_SSLMODE")
+	config.PostgresCfg.Host = os.Getenv("TEST_POSTGRES_HOST")
+	config.PostgresCfg.Port = os.Getenv("TEST_POSTGRES_PORT")
+	config.PostgresCfg.Name = os.Getenv("TEST_POSTGRES_NAME")
+	config.PostgresCfg.User = os.Getenv("TEST_POSTGRES_USER")
+	config.PostgresCfg.Password = os.Getenv("TEST_POSTGRES_PASSWORD")
+	config.PostgresCfg.SSLMode = os.Getenv("TEST_POSTGRES_SSLMODE")
 
 	return config, nil
 }
