@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: go-postgres-db
+    env_file:
+      - ../config/.env
+    ports:
+      - "5432:5432"
+    networks:
+      - go-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  url-shortener:
+    build: 
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: url-shortener
+    ports:
+      - "8080:8080"
+    env_file:
+      - ../config/.env
+    depends_on:
+      db: 
+        condition: service_healthy
+    networks:
+      - go-network
+
+networks:
+  go-network:
+    driver: bridge

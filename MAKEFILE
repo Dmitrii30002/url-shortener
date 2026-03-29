@@ -1,0 +1,8 @@
+test:
+	go test ./...
+
+run-service:
+	docker-compose -f deploy/docker-compose.yaml up -d
+
+stop-service:
+	docker-compose -f deploy/docker-compose.yaml down

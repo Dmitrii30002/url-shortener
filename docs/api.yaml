@@ -1,0 +1,209 @@
+openapi: 3.0.3
+info:
+  title: URL Shortener API
+  description: |
+    Сервис для сокращения ссылок.
+    
+    Возможности:
+    * Создание коротких ссылок (10 символов: латиница, цифры, подчёркивание)
+    * Получение оригинального URL по короткой ссылке
+    * Поддержка in-memory и PostgreSQL хранилищ
+    
+  version: 1.0.0
+  contact:
+    name: Dmitrii30002
+    url: https://github.com/Dmitrii30002/url-shortener
+    
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: URLs
+    description: Операции с короткими ссылками
+  - name: Health
+    description: Проверка состояния сервиса
+
+paths:
+  /short:
+    post:
+      tags:
+        - URLs
+      summary: Создать короткую ссылку
+      description: |
+        Принимает оригинальный URL и возвращает сокращённую ссылку.
+        Если URL уже существует в базе, возвращает существующую короткую ссылку.
+      operationId: createShortURL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateURLRequest'
+            example:
+              url: "https://example.com/very/long/url/that/needs/shortening"
+      responses:
+        '200':
+          description: Успешное создание или получение короткой ссылки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateURLResponse'
+              examples:
+                success:
+                  value:
+                    short_url: "http://localhost:8080/aB3xY9kLmN"
+        '400':
+          description: Неверный запрос (невалидный JSON или URL)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_json:
+                  value:
+                    error: "Invalid request body"
+                invalid_url:
+                  value:
+                    error: "Validation failed"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal server error"
+
+  /{short_url}:
+    get:
+      tags:
+        - URLs
+      summary: Получить оригинальный URL
+      description: Принимает короткую ссылку и возвращает оригинальный URL
+      operationId: getOriginalURL
+      parameters:
+        - name: short_url
+          in: path
+          required: true
+          description: Короткая ссылка (10 символов)
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_]{10}$'
+            minLength: 10
+            maxLength: 10
+          example: "aB3xY9kLmN"
+      responses:
+        '200':
+          description: Успешное получение оригинального URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOriginalURLResponse'
+              example:
+                original_url: "https://example.com/very/long/url/that/needs/shortening"
+        '400':
+          description: Неверный запрос (пустой short_url)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Short URL is required"
+        '404':
+          description: Короткая ссылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Short URL not found"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal server error"
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Проверка состояния сервиса
+      description: Возвращает статус сервиса для health checks
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Сервис работает
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "ok"
+                service: "url-shortener"
+
+components:
+  schemas:
+    CreateURLRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Оригинальный URL для сокращения
+          example: "https://example.com/very/long/url"
+      example:
+        url: "https://example.com/very/long/url"
+
+    CreateURLResponse:
+      type: object
+      properties:
+        short_url:
+          type: string
+          description: Сокращённая ссылка
+          example: "http://localhost:8080/aB3xY9kLmN"
+      required:
+        - short_url
+
+    GetOriginalURLResponse:
+      type: object
+      properties:
+        original_url:
+          type: string
+          format: url
+          description: Оригинальный URL
+          example: "https://example.com/very/long/url"
+      required:
+        - original_url
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Сообщение об ошибке
+          example: "Invalid request body"
+      required:
+        - error
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+          description: Статус сервиса
+          example: "ok"
+        service:
+          type: string
+          description: Название сервиса
+          example: "url-shortener"
+      required:
+        - status
+        - service
