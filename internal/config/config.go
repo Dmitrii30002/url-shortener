@@ -49,7 +49,7 @@ func GetTestConfig() (*Config, error) {
 
 	config.PostgresCfg.Host = os.Getenv("TEST_POSTGRES_HOST")
 	config.PostgresCfg.Port = os.Getenv("TEST_POSTGRES_PORT")
-	config.PostgresCfg.Name = os.Getenv("TEST_POSTGRES_NAME")
+	config.PostgresCfg.Name = os.Getenv("TEST_POSTGRES_DB")
 	config.PostgresCfg.User = os.Getenv("TEST_POSTGRES_USER")
 	config.PostgresCfg.Password = os.Getenv("TEST_POSTGRES_PASSWORD")
 	config.PostgresCfg.SSLMode = os.Getenv("TEST_POSTGRES_SSLMODE")
