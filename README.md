@@ -59,6 +59,15 @@ logger:
 
 ```
 Также помимо хранилища указывается базовый url для укороченной ссылки, а также конфигурация логгера и сервера.
+для запуска тестов необходимо установить следующие переменные для тестовой БД в env файле:
+```
+TEST_POSTGRES_HOST=db
+TEST_POSTGRES_PORT=5432
+TEST_POSTGRES_USER=postgres
+TEST_POSTGRES_PASSWORD=postgres
+TEST_POSTGRES_DB=postgres
+TEST_POSTGRES_SSLMODE=disable
+```
 
 ## Тестирование
 Были прописаны unit тесты для всех слоев сервиса, а также для пакета generator. Также для тестирования использовался postman.
